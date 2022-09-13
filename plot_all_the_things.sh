@@ -1,0 +1,12 @@
+python cifar10_mlp_plot.py
+python mnist_mlp_interp_plot.py
+
+python mnist_barrier_vs_epoch_plot.py
+python cifar10_mlp_barrier_vs_epoch_plot.py
+
+python cifar10_vgg_width_ablation_plot.py
+python cifar10_resnet20_width_ablation_plot.py
+
+python sgd_is_special.py
+
+python cifar100_resnet20_split_data_plot.py
