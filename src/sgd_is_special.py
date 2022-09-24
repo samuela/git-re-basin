@@ -27,7 +27,7 @@ dtype = jnp.float32
 paramsA = {
     "PReLU_0/negative_slope": jnp.array(0.01),
     "PReLU_1/negative_slope": jnp.array(0.01),
-    "Dense_0/kernel": jnp.array([[1, 0], [0, -1]], dtype=dtype),
+    "Dense_0/kernel": jnp.array([[-1, 0], [0, -1]], dtype=dtype),
     "Dense_0/bias": jnp.array([1, 0], dtype=dtype),
     "Dense_1/kernel": jnp.array([[-1, 0], [0, 1]], dtype=dtype),
     "Dense_1/bias": jnp.array([1, 0], dtype=dtype),
@@ -37,7 +37,7 @@ paramsA = {
 paramsB1 = {
     "PReLU_0/negative_slope": jnp.array(0.01),
     "PReLU_1/negative_slope": jnp.array(0.01),
-    "Dense_0/kernel": jnp.array([[-1, 0], [0, 1]], dtype=dtype),
+    "Dense_0/kernel": jnp.array([[1, 0], [0, 1]], dtype=dtype),
     "Dense_0/bias": jnp.array([0, 1], dtype=dtype),
     "Dense_1/kernel": jnp.array([[1, 0], [0, -1]], dtype=dtype),
     "Dense_1/bias": jnp.array([0, 1], dtype=dtype),
@@ -70,7 +70,7 @@ assert jnp.all(
 
 num_examples = 1024
 testX = random.uniform(rng, (num_examples, 2), dtype=dtype, minval=-1, maxval=1)
-testY = (testX[:, 0] >= 0) & (testX[:, 1] >= 0)
+testY = (testX[:, 0] <= 0) & (testX[:, 1] >= 0)
 
 def accuracy(params):
   return jnp.sum((model.apply({"params": unflatten_params(params)}, testX) >= 0
