@@ -199,14 +199,14 @@ if __name__ == "__main__":
     fig = plot_interp_loss(config.load_epoch, lambdas, train_loss_interp_naive,
                            test_loss_interp_naive, train_loss_interp_clever,
                            test_loss_interp_clever)
-    plt.savefig(f"cifar100_resnet20_weight_matching_interp_loss_epoch{config.load_epoch}.png",
+    plt.savefig(f"figs/cifar100_resnet20_weight_matching_interp_loss_epoch{config.load_epoch}.png",
                 dpi=300)
     wandb.log({"interp_loss_fig": wandb.Image(fig)}, commit=False)
     plt.close(fig)
 
     fig = plot_interp_acc(config.load_epoch, lambdas, train_acc_interp_naive, test_acc_interp_naive,
                           train_acc_interp_clever, test_acc_interp_clever)
-    plt.savefig(f"cifar100_resnet20_weight_matching_interp_accuracy_epoch{config.load_epoch}.png",
+    plt.savefig(f"figs/cifar100_resnet20_weight_matching_interp_accuracy_epoch{config.load_epoch}.png",
                 dpi=300)
     wandb.log({"interp_acc_fig": wandb.Image(fig)}, commit=False)
     plt.close(fig)
