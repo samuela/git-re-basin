@@ -43,7 +43,7 @@ def make_stuff(model):
     logits = model.apply({"params": params}, images_f32)
     l = jnp.mean(optax.softmax_cross_entropy(logits=logits, labels=y_onehot))
     num_correct = jnp.sum(jnp.argmax(logits, axis=-1) == labels)
-    return l, {"num_correct": num_correct}
+    return l, {"logits": logits, "num_correct": num_correct}
 
   @jit
   def step(rng, train_state, images, labels):
@@ -70,12 +70,28 @@ def make_stuff(model):
         sum(x["num_correct"] for x in infos) / num_examples,
     )
 
+  def dataset_logits(params, dataset, batch_size: int):
+    num_examples = dataset["images_u8"].shape[0]
+    assert num_examples % batch_size == 0
+    num_batches = num_examples // batch_size
+    batch_ix = jnp.arange(num_examples).reshape((num_batches, batch_size))
+    # Can't use vmap or run in a single batch since that overloads GPU memory.
+    _, infos = zip(*[
+        batch_eval(
+            params,
+            dataset["images_u8"][batch_ix[i, :], :, :, :],
+            dataset["labels"][batch_ix[i, :]],
+        ) for i in range(num_batches)
+    ])
+    return jnp.concatenate([x["logits"] for x in infos])
+
   return {
       "train_transform": train_transform,
       "normalize_transform": normalize_transform,
       "batch_eval": batch_eval,
       "step": step,
       "dataset_loss_and_accuracy": dataset_loss_and_accuracy,
+      "dataset_logits": dataset_logits,
   }
 
 def init_train_state(rng, model, learning_rate, num_epochs, batch_size, num_train_examples,
