@@ -50,7 +50,8 @@ def make_stuff(model):
     images_transformed = vmap(train_transform)(random.split(rng, images.shape[0]), images)
     (l, info), g = value_and_grad(batch_eval, has_aux=True)(train_state.params, images_transformed,
                                                             labels)
-    return train_state.apply_gradients(grads=g), {"batch_loss": l, **info}
+    # logits can be quite heaviweight, so we don't want to pass those along.
+    return train_state.apply_gradients(grads=g), {**info, "batch_loss": l, "logits": None}
 
   def dataset_loss_and_accuracy(params, dataset, batch_size: int):
     num_examples = dataset["images_u8"].shape[0]
