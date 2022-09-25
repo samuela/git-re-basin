@@ -102,6 +102,9 @@ def lerp(lam, t1, t2):
 def tree_norm(t):
   return jnp.sqrt(tree_reduce(operator.add, tree_map(lambda x: jnp.sum(x**2), t)))
 
+def tree_l2(t1, t2):
+  return tree_norm(tree_map(lambda x, y: x - y, t1, t2))
+
 def slerp(lam, t1, t2):
   # See https://en.wikipedia.org/wiki/Slerp
   om = jnp.arccos(

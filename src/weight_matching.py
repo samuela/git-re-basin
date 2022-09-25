@@ -7,7 +7,6 @@ from scipy.optimize import linear_sum_assignment
 
 from utils import rngmix
 
-
 class PermutationSpec(NamedTuple):
   perm_to_axes: dict
   axes_to_perm: dict
@@ -130,7 +129,13 @@ def apply_permutation(ps: PermutationSpec, perm, params):
   """Apply a `perm` to `params`."""
   return {k: get_permuted_param(ps, perm, k, params) for k in params.keys()}
 
-def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=100, init_perm=None):
+def weight_matching(rng,
+                    ps: PermutationSpec,
+                    params_a,
+                    params_b,
+                    max_iter=100,
+                    init_perm=None,
+                    silent=False):
   """Find a permutation of `params_b` to make them match `params_a`."""
   perm_sizes = {p: params_a[axes[0][0]].shape[axes[0][1]] for p, axes in ps.perm_to_axes.items()}
 
@@ -155,7 +160,7 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=100, 
 
       oldL = jnp.vdot(A, jnp.eye(n)[perm[p]])
       newL = jnp.vdot(A, jnp.eye(n)[ci, :])
-      print(f"{iteration}/{p}: {newL - oldL}")
+      if not silent: print(f"{iteration}/{p}: {newL - oldL}")
       progress = progress or newL > oldL + 1e-12
 
       perm[p] = jnp.array(ci)
