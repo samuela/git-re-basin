@@ -111,6 +111,65 @@ def resnet20_permutation_spec() -> PermutationSpec:
       **dense("dense", "P_bg2", None),
   })
 
+def resnet50_permutation_spec() -> PermutationSpec:
+  conv = lambda name, p_in, p_out: {f"{name}/kernel": (None, None, p_in, p_out)}
+  norm = lambda name, p: {f"{name}/scale": (p, ), f"{name}/bias": (p, )}
+  dense = lambda name, p_in, p_out: {f"{name}/kernel": (p_in, p_out), f"{name}/bias": (p_out, )}
+
+  # This is for easy blocks that use a residual connection, without any change in the number of channels.
+  easyblock = lambda name, p: {
+      **conv(f"{name}/conv1", p, f"P_{name}_inner1"),
+      **norm(f"{name}/norm1", f"P_{name}_inner1"),
+      #
+      **conv(f"{name}/conv2", f"P_{name}_inner1", f"P_{name}_inner2"),
+      **norm(f"{name}/norm2", f"P_{name}_inner2"),
+      #
+      **conv(f"{name}/conv3", f"P_{name}_inner2", p),
+      **norm(f"{name}/norm3", p),
+  }
+
+  # This is for blocks that use a residual connection, but change the number of channels via a Conv.
+  shortcutblock = lambda name, p_in, p_out: {
+      **conv(f"{name}/conv1", p_in, f"P_{name}_inner1"),
+      **norm(f"{name}/norm1", f"P_{name}_inner1"),
+      #
+      **conv(f"{name}/conv2", f"P_{name}_inner1", f"P_{name}_inner2"),
+      **norm(f"{name}/norm2", f"P_{name}_inner2"),
+      #
+      **conv(f"{name}/conv2", f"P_{name}_inner2", p_out),
+      **norm(f"{name}/norm2", p_out),
+      #
+      **conv(f"{name}/shortcut/layers_0", p_in, p_out),
+      **norm(f"{name}/shortcut/layers_1", p_out),
+  }
+
+  return permutation_spec_from_axes_to_perm({
+      **conv("conv1", None, "P_bg0"),
+      **norm("norm1", "P_bg0"),
+      #
+      **shortcutblock("blockgroups_0/blocks_0", "P_bg0"),
+      **easyblock("blockgroups_0/blocks_1", "P_bg0"),
+      **easyblock("blockgroups_0/blocks_2", "P_bg0"),
+      #
+      **shortcutblock("blockgroups_1/blocks_0", "P_bg0", "P_bg1"),
+      **easyblock("blockgroups_1/blocks_1", "P_bg1"),
+      **easyblock("blockgroups_1/blocks_2", "P_bg1"),
+      **easyblock("blockgroups_1/blocks_2", "P_bg1"),
+      #
+      **shortcutblock("blockgroups_2/blocks_0", "P_bg1", "P_bg2"),
+      **easyblock("blockgroups_2/blocks_1", "P_bg2"),
+      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
+      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
+      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
+      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
+      #
+      **shortcutblock("blockgroups_3/blocks_0", "P_bg2", "P_bg3"),
+      **easyblock("blockgroups_3/blocks_1", "P_bg3"),
+      **easyblock("blockgroups_3/blocks_2", "P_bg3"),
+      #
+      **dense("dense", "P_bg3", None),
+  })
+
 def get_permuted_param(ps: PermutationSpec, perm, k: str, params, except_axis=None):
   """Get parameter `k` from `params`, with the permutations applied."""
   w = params[k]
