@@ -114,10 +114,9 @@ if __name__ == "__main__":
   ax.set_xticks(range(len(all_runs)))
   ax.set_xticklabels([f"{x}×" for x in wm_glyphs])
   ax.set_ylabel("Loss barrier")
-  ax.set_title(f"ResNet")
+  ax.set_title("ResNet20")
   ax.legend(loc="upper right", framealpha=0.5)
   fig.tight_layout()
 
   plt.savefig("figs/cifar10_resnet20_width_ablation_line_plot.png", dpi=300)
   plt.savefig("figs/cifar10_resnet20_width_ablation_line_plot.pdf")
-  plt.savefig("figs/cifar10_resnet20_width_ablation_line_plot.eps")
