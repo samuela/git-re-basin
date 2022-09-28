@@ -42,6 +42,10 @@ pkgs.mkShell {
     python3Packages.tensorflow-datasets
     python3Packages.tqdm
     python3Packages.wandb
+
+    # Necessary for LaTeX in matplotlib.
+    texlive.combined.scheme-full
+
     yapf
   ];
 
