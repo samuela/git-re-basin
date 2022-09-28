@@ -73,12 +73,11 @@ if __name__ == "__main__":
   ax.set_xticks([0, 1])
   ax.set_xticklabels(["Model $A$", "Model $B$"])
   ax.set_ylabel("Loss")
-  ax.set_title(f"MNIST MLP Loss Interpolation")
+  ax.set_title(f"MNIST, MLP")
   ax.legend(loc="upper right", framealpha=0.5)
   fig.tight_layout()
 
   plt.savefig("figs/mnist_mlp_loss_interp.png", dpi=300)
-  plt.savefig("figs/mnist_mlp_loss_interp.eps")
   plt.savefig("figs/mnist_mlp_loss_interp.pdf")
 
   ### Accuracy plot
@@ -142,10 +141,9 @@ if __name__ == "__main__":
   ax.set_xticks([0, 1])
   ax.set_xticklabels(["Model $A$", "Model $B$"])
   ax.set_ylabel("Accuracy")
-  ax.set_title(f"MNIST MLP Accuracy Interpolation")
+  ax.set_title("MNIST, MLP")
   ax.legend(loc="lower right", framealpha=0.5)
   fig.tight_layout()
 
   plt.savefig("figs/mnist_mlp_accuracy_interp.png", dpi=300)
-  plt.savefig("figs/mnist_mlp_accuracy_interp.eps")
   plt.savefig("figs/mnist_mlp_accuracy_interp.pdf")
