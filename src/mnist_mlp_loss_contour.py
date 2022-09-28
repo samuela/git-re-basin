@@ -1,3 +1,4 @@
+import urllib
 from pathlib import Path
 
 import jax.numpy as jnp
@@ -9,6 +10,7 @@ from flax.serialization import from_bytes
 from jax import random
 from jax.flatten_util import ravel_pytree
 from matplotlib import tri
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from scipy.stats import qmc
 from tqdm import tqdm
 
@@ -134,39 +136,80 @@ with wandb.init(
   x, y = project2d(model_b_rebasin_flat)
   plt.text(x - 0.325, y + 0.075, r"${\bf \pi(\Theta_B)}$", color="white", fontsize=24)
 
-  arrow_start = np.array([1.0, 0.0])
-  arrow_stop = np.array([x, y])
   # https://github.com/matplotlib/matplotlib/issues/17284#issuecomment-772820638
   # Draw line only
+  connectionstyle = "arc3,rad=-0.3"
   plt.annotate("",
-               xy=arrow_start,
-               xytext=arrow_stop,
+               xy=(1, 0),
+               xytext=(x, y),
                arrowprops=dict(arrowstyle="-",
                                edgecolor="white",
                                facecolor="none",
-                               linewidth=3,
-                               linestyle="dashed",
-                               shrinkA=17.5,
-                               shrinkB=15))
+                               linewidth=5,
+                               linestyle=(0, (5, 3)),
+                               shrinkA=20,
+                               shrinkB=15,
+                               connectionstyle=connectionstyle))
   # Draw arrow head only
   plt.annotate("",
-               xy=arrow_start,
-               xytext=arrow_stop,
+               xy=(1, 0),
+               xytext=(x, y),
                arrowprops=dict(arrowstyle="<|-",
                                edgecolor="none",
                                facecolor="white",
-                               mutation_scale=30,
+                               mutation_scale=40,
                                linewidth=0,
                                shrinkA=12.5,
-                               shrinkB=15))
+                               shrinkB=15,
+                               connectionstyle=connectionstyle))
+
+  plt.annotate("",
+               xy=(0, 0),
+               xytext=(x, y),
+               arrowprops=dict(arrowstyle="-",
+                               edgecolor="white",
+                               alpha=0.5,
+                               facecolor="none",
+                               linewidth=2,
+                               linestyle="-",
+                               shrinkA=10,
+                               shrinkB=10))
+  plt.annotate("",
+               xy=(0, 0),
+               xytext=(1, 0),
+               arrowprops=dict(arrowstyle="-",
+                               edgecolor="white",
+                               alpha=0.5,
+                               facecolor="none",
+                               linewidth=2,
+                               linestyle="-",
+                               shrinkA=10,
+                               shrinkB=10))
+
+  plt.gca().add_artist(
+      AnnotationBbox(OffsetImage(plt.imread(
+          "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/325/check-mark-button_2705.png"
+      ),
+                                 zoom=0.1), (x / 2, y / 2),
+                     frameon=False))
+  plt.gca().add_artist(
+      AnnotationBbox(OffsetImage(plt.imread(
+          "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/325/cross-mark_274c.png"
+      ),
+                                 zoom=0.1), (0.5, 0),
+                     frameon=False))
 
   # "Git Re-Basin" box
+  #   box_x = 0.5 * (arrow_start[0] + arrow_stop[0])
+  #   box_y = 0.5 * (arrow_start[1] + arrow_stop[1])
   # box_x = 0.5 * (arrow_start[0] + arrow_stop[0]) + 0.325
   # box_y = 0.5 * (arrow_start[1] + arrow_stop[1]) + 0.2
 
   box_x = 0.5
   box_y = 1.3
+  # git_rebasin_text = r"\textsc{Git Re-Basin}"
   git_rebasin_text = r"\textbf{Git Re-Basin}"
+  # git_rebasin_text = r"\texttt{\textdollar{} git re-basin}"
 
   # Draw box only
   plt.text(box_x,
@@ -193,3 +236,4 @@ with wandb.init(
   plt.yticks([])
   plt.tight_layout()
   plt.savefig("figs/mnist_mlp_loss_contour.png", dpi=300)
+  plt.savefig("figs/mnist_mlp_loss_contour.pdf")
