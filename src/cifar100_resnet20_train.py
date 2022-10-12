@@ -42,8 +42,19 @@ def make_stuff(model):
     y_onehot = jax.nn.one_hot(labels, NUM_CLASSES)
     logits = model.apply({"params": params}, images_f32)
     l = jnp.mean(optax.softmax_cross_entropy(logits=logits, labels=y_onehot))
-    num_correct = jnp.sum(jnp.argmax(logits, axis=-1) == labels)
-    return l, {"logits": logits, "num_correct": num_correct}
+    top1_num_correct = jnp.sum(jnp.argmax(logits, axis=-1) == labels)
+    # See https://github.com/google/jax/issues/2079. argpartition is not currently (2022-09-28) supported.
+    # top5_num_correct = jnp.sum(
+    #     jnp.isin(labels[:, jnp.newaxis],
+    #              jnp.argpartition(logits, -5, axis=-1)[:, -5:]))
+    top5_num_correct = jnp.sum(
+        jnp.isin(labels[:, jnp.newaxis],
+                 jnp.argsort(logits, axis=-1)[:, -5:]))
+    return l, {
+        "logits": logits,
+        "top1_num_correct": top1_num_correct,
+        "top5_num_correct": top5_num_correct
+    }
 
   @jit
   def step(rng, train_state, images, labels):
@@ -53,7 +64,7 @@ def make_stuff(model):
     # logits can be quite heaviweight, so we don't want to pass those along.
     return train_state.apply_gradients(grads=g), {**info, "batch_loss": l, "logits": None}
 
-  def dataset_loss_and_accuracy(params, dataset, batch_size: int):
+  def dataset_loss_and_accuracies(params, dataset, batch_size: int):
     num_examples = dataset["images_u8"].shape[0]
     assert num_examples % batch_size == 0
     num_batches = num_examples // batch_size
@@ -68,7 +79,8 @@ def make_stuff(model):
     ])
     return (
         jnp.sum(batch_size * jnp.array(losses)) / num_examples,
-        sum(x["num_correct"] for x in infos) / num_examples,
+        sum(x["top1_num_correct"] for x in infos) / num_examples,
+        sum(x["top5_num_correct"] for x in infos) / num_examples,
     )
 
   def dataset_logits(params, dataset, batch_size: int):
@@ -91,7 +103,7 @@ def make_stuff(model):
       "normalize_transform": normalize_transform,
       "batch_eval": batch_eval,
       "step": step,
-      "dataset_loss_and_accuracy": dataset_loss_and_accuracy,
+      "dataset_loss_and_accuracies": dataset_loss_and_accuracies,
       "dataset_logits": dataset_logits,
   }
 
@@ -187,20 +199,23 @@ if __name__ == "__main__":
           infos.append(info)
 
       train_loss = sum(config.batch_size * x["batch_loss"] for x in infos) / num_train_examples
-      train_accuracy = sum(x["num_correct"] for x in infos) / num_train_examples
+      train_acc1 = sum(x["top1_num_correct"] for x in infos) / num_train_examples
+      train_acc5 = sum(x["top5_num_correct"] for x in infos) / num_train_examples
 
       # Evaluate test loss/accuracy
       with timeblock("Test set eval"):
-        test_loss, test_accuracy = stuff["dataset_loss_and_accuracy"](train_state.params, test_ds,
-                                                                      1000)
+        test_loss, test_acc1, test_acc5 = stuff["dataset_loss_and_accuracies"](train_state.params,
+                                                                               test_ds, 1000)
 
       # See https://github.com/wandb/client/issues/3690.
       wandb_run.log({
           "epoch": epoch,
           "train_loss": train_loss,
           "test_loss": test_loss,
-          "train_accuracy": train_accuracy,
-          "test_accuracy": test_accuracy,
+          "train_acc1": train_acc1,
+          "test_acc1": test_acc1,
+          "train_acc5": train_acc5,
+          "test_acc5": test_acc5,
       })
 
       # No point saving the model at all if we're running in test mode.

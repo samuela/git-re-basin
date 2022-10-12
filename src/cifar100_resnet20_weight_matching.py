@@ -12,7 +12,7 @@ from tqdm import tqdm
 from cifar100_resnet20_train import make_stuff
 from datasets import load_cifar100
 from resnet20 import BLOCKS_PER_GROUP, ResNet
-from utils import ec2_get_instance_type, flatten_params, lerp, unflatten_params
+from utils import (ec2_get_instance_type, flatten_params, lerp, timeblock, unflatten_params)
 from weight_matching import (apply_permutation, resnet20_permutation_spec, weight_matching)
 
 def plot_interp_loss(epoch, lambdas, train_loss_interp_naive, test_loss_interp_naive,
@@ -141,8 +141,9 @@ if __name__ == "__main__":
     train_ds, test_ds = load_cifar100()
 
     permutation_spec = resnet20_permutation_spec()
-    final_permutation = weight_matching(random.PRNGKey(config.seed), permutation_spec,
-                                        flatten_params(model_a), flatten_params(model_b))
+    with timeblock("weight matching"):
+      final_permutation = weight_matching(random.PRNGKey(config.seed), permutation_spec,
+                                          flatten_params(model_a), flatten_params(model_b))
 
     # Save final_permutation as an Artifact
     artifact = wandb.Artifact("model_b_permutation",
@@ -159,41 +160,56 @@ if __name__ == "__main__":
     lambdas = jnp.linspace(0, 1, num=25)
     train_loss_interp_naive = []
     test_loss_interp_naive = []
-    train_acc_interp_naive = []
-    test_acc_interp_naive = []
+    train_acc1_interp_naive = []
+    test_acc1_interp_naive = []
+    train_acc5_interp_naive = []
+    test_acc5_interp_naive = []
     for lam in tqdm(lambdas):
       naive_p = lerp(lam, model_a, model_b)
-      train_loss, train_acc = stuff["dataset_loss_and_accuracy"](naive_p, train_ds, 1000)
-      test_loss, test_acc = stuff["dataset_loss_and_accuracy"](naive_p, test_ds, 1000)
+      train_loss, train_acc1, train_acc5 = stuff["dataset_loss_and_accuracies"](naive_p, train_ds,
+                                                                                1000)
+      test_loss, test_acc1, test_acc5 = stuff["dataset_loss_and_accuracies"](naive_p, test_ds, 1000)
       train_loss_interp_naive.append(train_loss)
       test_loss_interp_naive.append(test_loss)
-      train_acc_interp_naive.append(train_acc)
-      test_acc_interp_naive.append(test_acc)
+      train_acc1_interp_naive.append(train_acc1)
+      test_acc1_interp_naive.append(test_acc1)
+      train_acc5_interp_naive.append(train_acc5)
+      test_acc5_interp_naive.append(test_acc5)
 
     model_b_clever = unflatten_params(
         apply_permutation(permutation_spec, final_permutation, flatten_params(model_b)))
 
     train_loss_interp_clever = []
     test_loss_interp_clever = []
-    train_acc_interp_clever = []
-    test_acc_interp_clever = []
+    train_acc1_interp_clever = []
+    test_acc1_interp_clever = []
+    train_acc5_interp_clever = []
+    test_acc5_interp_clever = []
     for lam in tqdm(lambdas):
       clever_p = lerp(lam, model_a, model_b_clever)
-      train_loss, train_acc = stuff["dataset_loss_and_accuracy"](clever_p, train_ds, 1000)
-      test_loss, test_acc = stuff["dataset_loss_and_accuracy"](clever_p, test_ds, 1000)
+      train_loss, train_acc1, train_acc5 = stuff["dataset_loss_and_accuracies"](clever_p, train_ds,
+                                                                                1000)
+      test_loss, test_acc1, test_acc5 = stuff["dataset_loss_and_accuracies"](clever_p, test_ds,
+                                                                             1000)
       train_loss_interp_clever.append(train_loss)
       test_loss_interp_clever.append(test_loss)
-      train_acc_interp_clever.append(train_acc)
-      test_acc_interp_clever.append(test_acc)
+      train_acc1_interp_clever.append(train_acc1)
+      test_acc1_interp_clever.append(test_acc1)
+      train_acc5_interp_clever.append(train_acc5)
+      test_acc5_interp_clever.append(test_acc5)
 
     assert len(lambdas) == len(train_loss_interp_naive)
     assert len(lambdas) == len(test_loss_interp_naive)
-    assert len(lambdas) == len(train_acc_interp_naive)
-    assert len(lambdas) == len(test_acc_interp_naive)
+    assert len(lambdas) == len(train_acc1_interp_naive)
+    assert len(lambdas) == len(test_acc1_interp_naive)
+    assert len(lambdas) == len(train_acc5_interp_naive)
+    assert len(lambdas) == len(test_acc5_interp_naive)
     assert len(lambdas) == len(train_loss_interp_clever)
     assert len(lambdas) == len(test_loss_interp_clever)
-    assert len(lambdas) == len(train_acc_interp_clever)
-    assert len(lambdas) == len(test_acc_interp_clever)
+    assert len(lambdas) == len(train_acc1_interp_clever)
+    assert len(lambdas) == len(test_acc1_interp_clever)
+    assert len(lambdas) == len(train_acc5_interp_clever)
+    assert len(lambdas) == len(test_acc5_interp_clever)
 
     print("Plotting...")
     fig = plot_interp_loss(config.load_epoch, lambdas, train_loss_interp_naive,
@@ -204,33 +220,50 @@ if __name__ == "__main__":
     wandb.log({"interp_loss_fig": wandb.Image(fig)}, commit=False)
     plt.close(fig)
 
-    fig = plot_interp_acc(config.load_epoch, lambdas, train_acc_interp_naive, test_acc_interp_naive,
-                          train_acc_interp_clever, test_acc_interp_clever)
-    plt.savefig(f"figs/cifar100_resnet20_weight_matching_interp_accuracy_epoch{config.load_epoch}.png",
+    # top1
+    fig = plot_interp_acc(config.load_epoch, lambdas, train_acc1_interp_naive,
+                          test_acc1_interp_naive, train_acc1_interp_clever, test_acc1_interp_clever)
+    plt.savefig(f"figs/cifar100_resnet20_weight_matching_interp_acc1_epoch{config.load_epoch}.png",
                 dpi=300)
-    wandb.log({"interp_acc_fig": wandb.Image(fig)}, commit=False)
+    wandb.log({"interp_acc1_fig": wandb.Image(fig)}, commit=False)
+    plt.close(fig)
+
+    # top5
+    fig = plot_interp_acc(config.load_epoch, lambdas, train_acc5_interp_naive,
+                          test_acc5_interp_naive, train_acc5_interp_clever, test_acc5_interp_clever)
+    plt.savefig(f"figs/cifar100_resnet20_weight_matching_interp_acc5_epoch{config.load_epoch}.png",
+                dpi=300)
+    wandb.log({"interp_acc5_fig": wandb.Image(fig)}, commit=False)
     plt.close(fig)
 
     wandb.log({
         "train_loss_interp_naive": train_loss_interp_naive,
         "test_loss_interp_naive": test_loss_interp_naive,
-        "train_acc_interp_naive": train_acc_interp_naive,
-        "test_acc_interp_naive": test_acc_interp_naive,
+        "train_acc1_interp_naive": train_acc1_interp_naive,
+        "test_acc1_interp_naive": test_acc1_interp_naive,
+        "train_acc5_interp_naive": train_acc5_interp_naive,
+        "test_acc5_interp_naive": test_acc5_interp_naive,
         "train_loss_interp_clever": train_loss_interp_clever,
         "test_loss_interp_clever": test_loss_interp_clever,
-        "train_acc_interp_clever": train_acc_interp_clever,
-        "test_acc_interp_clever": test_acc_interp_clever,
+        "train_acc1_interp_clever": train_acc1_interp_clever,
+        "test_acc1_interp_clever": test_acc1_interp_clever,
+        "train_acc5_interp_clever": train_acc5_interp_clever,
+        "test_acc5_interp_clever": test_acc5_interp_clever,
     })
 
     print({
         "train_loss_interp_naive": train_loss_interp_naive,
         "test_loss_interp_naive": test_loss_interp_naive,
-        "train_acc_interp_naive": train_acc_interp_naive,
-        "test_acc_interp_naive": test_acc_interp_naive,
+        "train_acc1_interp_naive": train_acc1_interp_naive,
+        "test_acc1_interp_naive": test_acc1_interp_naive,
+        "train_acc5_interp_naive": train_acc5_interp_naive,
+        "test_acc5_interp_naive": test_acc5_interp_naive,
         "train_loss_interp_clever": train_loss_interp_clever,
         "test_loss_interp_clever": test_loss_interp_clever,
-        "train_acc_interp_clever": train_acc_interp_clever,
-        "test_acc_interp_clever": test_acc_interp_clever,
+        "train_acc1_interp_clever": train_acc1_interp_clever,
+        "test_acc1_interp_clever": test_acc1_interp_clever,
+        "train_acc5_interp_clever": train_acc5_interp_clever,
+        "test_acc5_interp_clever": test_acc5_interp_clever,
     })
 
 # if __name__ == "__main__":
