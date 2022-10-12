@@ -147,27 +147,27 @@ def resnet50_permutation_spec() -> PermutationSpec:
       **conv("conv1", None, "P_bg0"),
       **norm("norm1", "P_bg0"),
       #
-      **shortcutblock("blockgroups_0/blocks_0", "P_bg0"),
-      **easyblock("blockgroups_0/blocks_1", "P_bg0"),
-      **easyblock("blockgroups_0/blocks_2", "P_bg0"),
+      **shortcutblock("blockgroups_0/blocks_0", "P_bg0", "P_bg1"),
+      **easyblock("blockgroups_0/blocks_1", "P_bg1"),
+      **easyblock("blockgroups_0/blocks_2", "P_bg1"),
       #
-      **shortcutblock("blockgroups_1/blocks_0", "P_bg0", "P_bg1"),
-      **easyblock("blockgroups_1/blocks_1", "P_bg1"),
-      **easyblock("blockgroups_1/blocks_2", "P_bg1"),
-      **easyblock("blockgroups_1/blocks_2", "P_bg1"),
+      **shortcutblock("blockgroups_1/blocks_0", "P_bg1", "P_bg2"),
+      **easyblock("blockgroups_1/blocks_1", "P_bg2"),
+      **easyblock("blockgroups_1/blocks_2", "P_bg2"),
+      **easyblock("blockgroups_1/blocks_3", "P_bg2"),
       #
-      **shortcutblock("blockgroups_2/blocks_0", "P_bg1", "P_bg2"),
-      **easyblock("blockgroups_2/blocks_1", "P_bg2"),
-      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
-      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
-      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
-      **easyblock("blockgroups_2/blocks_2", "P_bg2"),
+      **shortcutblock("blockgroups_2/blocks_0", "P_bg2", "P_bg3"),
+      **easyblock("blockgroups_2/blocks_1", "P_bg3"),
+      **easyblock("blockgroups_2/blocks_2", "P_bg3"),
+      **easyblock("blockgroups_2/blocks_3", "P_bg3"),
+      **easyblock("blockgroups_2/blocks_4", "P_bg3"),
+      **easyblock("blockgroups_2/blocks_5", "P_bg3"),
       #
-      **shortcutblock("blockgroups_3/blocks_0", "P_bg2", "P_bg3"),
-      **easyblock("blockgroups_3/blocks_1", "P_bg3"),
-      **easyblock("blockgroups_3/blocks_2", "P_bg3"),
+      **shortcutblock("blockgroups_3/blocks_0", "P_bg3", "P_bg4"),
+      **easyblock("blockgroups_3/blocks_1", "P_bg4"),
+      **easyblock("blockgroups_3/blocks_2", "P_bg4"),
       #
-      **dense("dense", "P_bg3", None),
+      **dense("dense", "P_bg4", None),
   })
 
 def get_permuted_param(ps: PermutationSpec, perm, k: str, params, except_axis=None):
