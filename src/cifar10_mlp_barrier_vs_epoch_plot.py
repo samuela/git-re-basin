@@ -11,10 +11,10 @@ from plot_utils import loss_barrier_is_nonnegative
 max_epoch = 25
 
 api = wandb.Api()
-# https://wandb.ai/skainswo/playing-the-lottery/runs/1t9yk4tm
-# run = api.run("skainswo/playing-the-lottery/1t9yk4tm")
+# https://wandb.ai/skainswo/git-re-basin/runs/1t9yk4tm
+# run = api.run("skainswo/git-re-basin/1t9yk4tm")
 artifact = Path(
-    api.artifact("skainswo/playing-the-lottery/cifar10_permutation_eval_vs_epoch:v0").download())
+    api.artifact("skainswo/git-re-basin/cifar10_permutation_eval_vs_epoch:v0").download())
 
 with open(artifact / "permutation_eval_vs_epoch.pkl", "rb") as f:
   interp_eval_vs_epoch = pickle.load(f)

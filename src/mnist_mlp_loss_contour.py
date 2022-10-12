@@ -22,7 +22,7 @@ from weight_matching import (apply_permutation, mlp_permutation_spec, weight_mat
 matplotlib.rcParams["text.usetex"] = True
 
 with wandb.init(
-    project="playing-the-lottery",
+    project="git-re-basin",
     entity="skainswo",
     tags=["mnist", "mlp", "weight-matching", "barrier-vs-epoch"],
     job_type="analysis",

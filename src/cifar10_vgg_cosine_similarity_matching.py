@@ -234,8 +234,8 @@ if __name__ == "__main__":
                                             num_train_examples=50000)), contents)
       return ret
 
-  model_a = load_checkpoint("skainswo/playing-the-lottery/3467b9pk", epoch)
-  model_b = load_checkpoint("skainswo/playing-the-lottery/s622wdyh", epoch)
+  model_a = load_checkpoint("skainswo/git-re-basin/3467b9pk", epoch)
+  model_b = load_checkpoint("skainswo/git-re-basin/s622wdyh", epoch)
 
   lambdas = jnp.linspace(0, 1, num=10)
   train_loss_interp_clever = []

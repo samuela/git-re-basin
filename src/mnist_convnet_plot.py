@@ -200,8 +200,8 @@ if __name__ == "__main__":
       _, ret = from_bytes((0, init_train_state(random.PRNGKey(0), 0.0, model)), contents)
       return ret
 
-  model_a = load_checkpoint("skainswo/playing-the-lottery/n83xc9z7", epoch)
-  model_b = load_checkpoint("skainswo/playing-the-lottery/33fxg7w5", epoch)
+  model_a = load_checkpoint("skainswo/git-re-basin/n83xc9z7", epoch)
+  model_b = load_checkpoint("skainswo/git-re-basin/33fxg7w5", epoch)
 
   lambdas = jnp.linspace(0, 1, num=10)
   train_loss_interp_clever = []

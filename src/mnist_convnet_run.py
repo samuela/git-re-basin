@@ -130,7 +130,7 @@ if __name__ == "__main__":
                       help="The epoch to resume from. Required if --resume is set.")
   args = parser.parse_args()
 
-  wandb.init(project="playing-the-lottery",
+  wandb.init(project="git-re-basin",
              entity="skainswo",
              tags=["mnist", "convnet"],
              resume="must" if args.resume is not None else None,

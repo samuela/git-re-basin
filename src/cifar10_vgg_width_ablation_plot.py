@@ -9,12 +9,12 @@ from plot_utils import loss_barrier_is_nonnegative
 
 if __name__ == "__main__":
   api = wandb.Api()
-  wm8_run = api.run("skainswo/playing-the-lottery/i85jxkgf")
-  wm16_run = api.run("skainswo/playing-the-lottery/gk003bct")
-  wm32_run = api.run("skainswo/playing-the-lottery/1np06qag")
-  wm64_run = api.run("skainswo/playing-the-lottery/31kskp4e")
-  wm128_run = api.run("skainswo/playing-the-lottery/17huxv8g")
-  wm256_run = api.run("skainswo/playing-the-lottery/37g4iks3")
+  wm8_run = api.run("skainswo/git-re-basin/i85jxkgf")
+  wm16_run = api.run("skainswo/git-re-basin/gk003bct")
+  wm32_run = api.run("skainswo/git-re-basin/1np06qag")
+  wm64_run = api.run("skainswo/git-re-basin/31kskp4e")
+  wm128_run = api.run("skainswo/git-re-basin/17huxv8g")
+  wm256_run = api.run("skainswo/git-re-basin/37g4iks3")
   all_runs = [wm8_run, wm16_run, wm32_run, wm64_run, wm128_run, wm256_run]
 
   fig = plt.figure()

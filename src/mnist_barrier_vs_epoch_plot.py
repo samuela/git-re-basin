@@ -11,9 +11,9 @@ from plot_utils import loss_barrier_is_nonnegative
 max_epoch = 25
 
 api = wandb.Api()
-# run = api.run("skainswo/playing-the-lottery/begnvj15")
+# run = api.run("skainswo/git-re-basin/begnvj15")
 artifact = Path(
-    api.artifact("skainswo/playing-the-lottery/mnist_permutation_eval_vs_epoch:v0").download())
+    api.artifact("skainswo/git-re-basin/mnist_permutation_eval_vs_epoch:v0").download())
 
 with open(artifact / "permutation_eval_vs_epoch.pkl", "rb") as f:
   interp_eval_vs_epoch = pickle.load(f)

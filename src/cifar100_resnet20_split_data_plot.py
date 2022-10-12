@@ -6,10 +6,11 @@ import matplotlib_style as _
 
 api = wandb.Api()
 # width multiplier = 32
-weight_matching_run = api.run("skainswo/playing-the-lottery/r9tyrenf")  # lerp
-# weight_matching_run = api.run("skainswo/playing-the-lottery/bcu96ank")  # slerp
-ensembling_run = api.run("skainswo/playing-the-lottery/2nwx9yyu")
-combined_training_run = api.run("skainswo/playing-the-lottery/f40w12z7")
+# weight_matching_run = api.run("skainswo/git-re-basin/r9tyrenf")  # lerp
+weight_matching_run = api.run("skainswo/git-re-basin/3so345lw")  # lerp, with top-5
+# weight_matching_run = api.run("skainswo/git-re-basin/bcu96ank")  # slerp
+ensembling_run = api.run("skainswo/git-re-basin/2nwx9yyu")
+combined_training_run = api.run("skainswo/git-re-basin/f40w12z7")
 
 ### Loss plot
 fig = plt.figure()

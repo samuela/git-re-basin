@@ -103,7 +103,7 @@ def main():
   args = parser.parse_args()
 
   with wandb.init(
-      project="playing-the-lottery",
+      project="git-re-basin",
       entity="skainswo",
       tags=["cifar10", "mlp", "weight-matching"],
       job_type="analysis",

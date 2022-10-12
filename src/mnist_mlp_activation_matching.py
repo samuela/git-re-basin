@@ -117,7 +117,7 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   with wandb.init(
-      project="playing-the-lottery",
+      project="git-re-basin",
       entity="skainswo",
       tags=["mnist", "mlp", "activation-matching"],
       job_type="analysis",

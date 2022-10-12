@@ -102,7 +102,7 @@ def main():
   args = parser.parse_args()
 
   with wandb.init(
-      project="playing-the-lottery",
+      project="git-re-basin",
       entity="skainswo",
       tags=["mnist", "mlp", "training"],
       mode="disabled" if args.test else "online",
@@ -137,9 +137,9 @@ def main():
 
     if config.optimizer == "sgd":
       # See runs:
-      # * https://wandb.ai/skainswo/playing-the-lottery/runs/3blb4uhm
-      # * https://wandb.ai/skainswo/playing-the-lottery/runs/174j7umt
-      # * https://wandb.ai/skainswo/playing-the-lottery/runs/td02y8gg
+      # * https://wandb.ai/skainswo/git-re-basin/runs/3blb4uhm
+      # * https://wandb.ai/skainswo/git-re-basin/runs/174j7umt
+      # * https://wandb.ai/skainswo/git-re-basin/runs/td02y8gg
       lr_schedule = optax.warmup_cosine_decay_schedule(
           init_value=1e-6,
           peak_value=config.learning_rate,
@@ -151,13 +151,13 @@ def main():
       tx = optax.sgd(lr_schedule, momentum=0.9)
     elif config.optimizer == "adam":
       # See runs:
-      # - https://wandb.ai/skainswo/playing-the-lottery/runs/1b1gztfx (trim-fire-575)
-      # - https://wandb.ai/skainswo/playing-the-lottery/runs/1hrmw7wr (wild-dream-576)
+      # - https://wandb.ai/skainswo/git-re-basin/runs/1b1gztfx (trim-fire-575)
+      # - https://wandb.ai/skainswo/git-re-basin/runs/1hrmw7wr (wild-dream-576)
       tx = optax.adam(config.learning_rate)
     else:
       # See runs:
-      # - https://wandb.ai/skainswo/playing-the-lottery/runs/k4luj7er (faithful-spaceship-579)
-      # - https://wandb.ai/skainswo/playing-the-lottery/runs/3ru7xy8c (sage-forest-580)
+      # - https://wandb.ai/skainswo/git-re-basin/runs/k4luj7er (faithful-spaceship-579)
+      # - https://wandb.ai/skainswo/git-re-basin/runs/3ru7xy8c (sage-forest-580)
       tx = optax.adamw(config.learning_rate, weight_decay=1e-4)
 
     train_state = TrainState.create(

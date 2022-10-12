@@ -6,9 +6,9 @@ import matplotlib_style as _
 
 if __name__ == "__main__":
   api = wandb.Api()
-  activation_matching_run = api.run("skainswo/playing-the-lottery/15tzxwm2")
-  weight_matching_run = api.run("skainswo/playing-the-lottery/1i7s3fop")
-  ste_matching_run = api.run("skainswo/playing-the-lottery/3tycauxs")
+  activation_matching_run = api.run("skainswo/git-re-basin/15tzxwm2")
+  weight_matching_run = api.run("skainswo/git-re-basin/1i7s3fop")
+  ste_matching_run = api.run("skainswo/git-re-basin/3tycauxs")
 
   ### Loss plot
   fig = plt.figure()

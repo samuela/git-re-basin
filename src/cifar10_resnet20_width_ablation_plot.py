@@ -7,12 +7,12 @@ from plot_utils import loss_barrier_is_nonnegative
 
 if __name__ == "__main__":
   api = wandb.Api()
-  wm1_run = api.run("skainswo/playing-the-lottery/61rq8cq7")
-  wm2_run = api.run("skainswo/playing-the-lottery/2xer5nly")
-  wm4_run = api.run("skainswo/playing-the-lottery/3gtdjmnf")
-  wm8_run = api.run("skainswo/playing-the-lottery/3gq93t7g")
-  wm16_run = api.run("skainswo/playing-the-lottery/2zeq7qy2")
-  wm32_run = api.run("skainswo/playing-the-lottery/223t7txl")
+  wm1_run = api.run("skainswo/git-re-basin/61rq8cq7")
+  wm2_run = api.run("skainswo/git-re-basin/2xer5nly")
+  wm4_run = api.run("skainswo/git-re-basin/3gtdjmnf")
+  wm8_run = api.run("skainswo/git-re-basin/3gq93t7g")
+  wm16_run = api.run("skainswo/git-re-basin/2zeq7qy2")
+  wm32_run = api.run("skainswo/git-re-basin/223t7txl")
 
   all_runs = [wm1_run, wm2_run, wm4_run, wm8_run, wm16_run, wm32_run]
 

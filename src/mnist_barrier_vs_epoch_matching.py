@@ -12,14 +12,14 @@ from utils import ec2_get_instance_type, flatten_params, lerp, unflatten_params
 from weight_matching import (apply_permutation, mlp_permutation_spec, weight_matching)
 
 with wandb.init(
-    project="playing-the-lottery",
+    project="git-re-basin",
     entity="skainswo",
     tags=["mnist", "mlp", "weight-matching", "barrier-vs-epoch"],
     job_type="analysis",
 ) as wandb_run:
   # api = wandb.Api()
-  # seed0_run = api.run("skainswo/playing-the-lottery/1b1gztfx")
-  # seed1_run = api.run("skainswo/playing-the-lottery/1hrmw7wr")
+  # seed0_run = api.run("skainswo/git-re-basin/1b1gztfx")
+  # seed1_run = api.run("skainswo/git-re-basin/1hrmw7wr")
 
   config = wandb.config
   config.ec2_instance_type = ec2_get_instance_type()

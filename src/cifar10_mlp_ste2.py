@@ -113,7 +113,7 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   with wandb.init(
-      project="playing-the-lottery",
+      project="git-re-basin",
       entity="skainswo",
       tags=["cifar10", "mlp", "ste2"],
       # See https://github.com/wandb/client/issues/3672.

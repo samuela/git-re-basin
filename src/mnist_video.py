@@ -11,9 +11,9 @@ from tqdm import tqdm
 import matplotlib_style as _
 
 api = wandb.Api()
-# run = api.run("skainswo/playing-the-lottery/begnvj15")
+# run = api.run("skainswo/git-re-basin/begnvj15")
 artifact = Path(
-    api.artifact("skainswo/playing-the-lottery/mnist_permutation_eval_vs_epoch:v1").download())
+    api.artifact("skainswo/git-re-basin/mnist_permutation_eval_vs_epoch:v1").download())
 
 with open(artifact / "permutation_eval_vs_epoch.pkl", "rb") as f:
   interp_eval_vs_epoch = pickle.load(f)

@@ -1,5 +1,5 @@
 # Example usage:
-#     python parallel_mnist_videos.py skainswo/playing-the-lottery/2vzg9n1u
+#     python parallel_mnist_videos.py skainswo/git-re-basin/2vzg9n1u
 
 import subprocess
 import sys

@@ -5,7 +5,7 @@ import wandb
 import matplotlib_style as _
 
 api = wandb.Api()
-wm32_run = api.run("skainswo/playing-the-lottery/223t7txl")
+wm32_run = api.run("skainswo/git-re-basin/223t7txl")
 
 # ins2.plot(all_runs[-1].summary["train_loss_interp_clever"])
 # ins2.plot(all_runs[-1].summary["test_loss_interp_clever"], linestyle="dashed")

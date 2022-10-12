@@ -24,7 +24,7 @@ config.num_epochs = 10 if config.smoke_test else 50
 config.batch_size = 7 if config.smoke_test else 256
 
 wandb.init(entity="skainswo",
-           project="playing-the-lottery",
+           project="git-re-basin",
            tags=["cifar10"],
            mode="disabled" if config.smoke_test else "online")
 
