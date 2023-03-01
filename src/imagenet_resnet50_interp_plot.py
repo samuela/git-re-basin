@@ -157,6 +157,108 @@ weight_matching_results = [
     },
 ]
 
+otfusion_results = [{
+    "lambda": 0.0,
+    "acc1": 0.7619799971580505,
+    "acc5": 0.9301400184631348
+}, {
+    "lambda": 0.0416666679084301,
+    "acc1": 0.7616199851036072,
+    "acc5": 0.9289600253105164
+}, {
+    "lambda": 0.0833333358168602,
+    "acc1": 0.7581200003623962,
+    "acc5": 0.9272800087928772
+}, {
+    "lambda": 0.125,
+    "acc1": 0.7495800256729126,
+    "acc5": 0.9236800074577332
+}, {
+    "lambda": 0.1666666716337204,
+    "acc1": 0.7362200021743774,
+    "acc5": 0.9159600138664246
+}, {
+    "lambda": 0.2083333432674408,
+    "acc1": 0.7118399739265442,
+    "acc5": 0.9031599760055542
+}, {
+    "lambda": 0.25,
+    "acc1": 0.6706399917602539,
+    "acc5": 0.8777199983596802
+}, {
+    "lambda": 0.2916666865348816,
+    "acc1": 0.5908799767494202,
+    "acc5": 0.8233199715614319
+}, {
+    "lambda": 0.3333333432674408,
+    "acc1": 0.4489000141620636,
+    "acc5": 0.7037000060081482
+}, {
+    "lambda": 0.375,
+    "acc1": 0.2278199940919876,
+    "acc5": 0.4514800012111664
+}, {
+    "lambda": 0.4166666865348816,
+    "acc1": 0.06289999932050705,
+    "acc5": 0.17047999799251556
+}, {
+    "lambda": 0.4583333432674408,
+    "acc1": 0.017980000004172325,
+    "acc5": 0.059379998594522476
+}, {
+    "lambda": 0.5,
+    "acc1": 0.01372000016272068,
+    "acc5": 0.0478999987244606
+}, {
+    "lambda": 0.5416666865348816,
+    "acc1": 0.03200000151991844,
+    "acc5": 0.09933999925851822
+}, {
+    "lambda": 0.5833333730697632,
+    "acc1": 0.1325400024652481,
+    "acc5": 0.2991600036621094
+}, {
+    "lambda": 0.625,
+    "acc1": 0.34408000111579895,
+    "acc5": 0.5936400294303894
+}, {
+    "lambda": 0.6666666269302368,
+    "acc1": 0.5240799784660339,
+    "acc5": 0.7721400260925293
+}, {
+    "lambda": 0.7083333134651184,
+    "acc1": 0.631820023059845,
+    "acc5": 0.8521400094032288
+}, {
+    "lambda": 0.75,
+    "acc1": 0.6878200173377991,
+    "acc5": 0.8891000151634216
+}, {
+    "lambda": 0.7916666865348816,
+    "acc1": 0.72079998254776,
+    "acc5": 0.9069200158119202
+}, {
+    "lambda": 0.8333333134651184,
+    "acc1": 0.7375400066375732,
+    "acc5": 0.9173799753189087
+}, {
+    "lambda": 0.875,
+    "acc1": 0.7487800121307373,
+    "acc5": 0.9226999878883362
+}, {
+    "lambda": 0.9166666865348816,
+    "acc1": 0.7555599808692932,
+    "acc5": 0.9256200194358826
+}, {
+    "lambda": 0.9583333134651184,
+    "acc1": 0.7584400177001953,
+    "acc5": 0.9273200035095215
+}, {
+    "lambda": 1.0,
+    "acc1": 0.7587400078773499,
+    "acc5": 0.9274799823760986
+}]
+
 naive_results = [
     {
         'lambda': 0.0,
@@ -311,21 +413,17 @@ naive_results = [
 ]
 
 wm_lambdas = np.array([x["lambda"] for x in weight_matching_results])
+otfusion_lambdas = np.array([x["lambda"] for x in otfusion_results])
 naive_lambdas = np.array([x["lambda"] for x in naive_results])
+np.testing.assert_allclose(wm_lambdas, otfusion_lambdas)
 np.testing.assert_allclose(wm_lambdas, naive_lambdas)
 lambdas = wm_lambdas
 
-### Loss plot
+### Loss plot (without OT-Fusion)
 fig = plt.figure()
 ax = fig.add_subplot(111)
-# lambdas = np.linspace(0, 1, 25)
 
 # Naive
-# ax.plot(lambdas,
-#         np.array([x["loss"] for x in naive_results]),
-#         color="grey",
-#         linewidth=2,
-#         label=f"Naïve")
 ax.plot(
     lambdas,
     [x["loss"] for x in naive_results],
@@ -334,27 +432,7 @@ ax.plot(
     linestyle="dashed",
 )
 
-# Activation matching
-# ax.plot(lambdas,
-#         np.array(activation_matching_run.summary["train_loss_interp_clever"]),
-#         color="tab:blue",
-#         marker="*",
-#         linewidth=2,
-#         label=f"Activation matching")
-# ax.plot(lambdas,
-#         np.array(activation_matching_run.summary["test_loss_interp_clever"]),
-#         color="tab:blue",
-#         marker="*",
-#         linewidth=2,
-#         linestyle="dashed")
-
 # Weight matching
-# ax.plot(lambdas,
-#         np.array(weight_matching_run.summary["train_loss_interp_clever"]),
-#         color="tab:green",
-#         marker="^",
-#         linewidth=2,
-#         label=f"Weight matching")
 ax.plot(
     lambdas,
     [x["loss"] for x in weight_matching_results],
@@ -363,20 +441,6 @@ ax.plot(
     linestyle="dashed",
     linewidth=2,
 )
-
-# STE matching
-# ax.plot(lambdas,
-#         np.array(ste_matching_run.summary["train_loss_interp_clever"]),
-#         color="tab:red",
-#         marker="p",
-#         linewidth=2,
-#         label=f"STE matching")
-# ax.plot(lambdas,
-#         np.array(ste_matching_run.summary["test_loss_interp_clever"]),
-#         color="tab:red",
-#         marker="p",
-#         linestyle="dashed",
-#         linewidth=2)
 
 ax.plot([], [], color="grey", linewidth=2, label="Train")
 ax.plot([], [], color="grey", linewidth=2, linestyle="dashed", label="Test")
@@ -392,6 +456,50 @@ fig.tight_layout()
 plt.savefig("figs/imagenet_resnet50_loss_interp.png", dpi=300)
 plt.savefig("figs/imagenet_resnet50_loss_interp.pdf")
 
+# ### Loss plot (with OT-Fusion)
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+
+# # Naive
+# ax.plot(
+#     lambdas,
+#     [x["loss"] for x in naive_results],
+#     color="grey",
+#     linewidth=2,
+#     linestyle="dashed",label="Naïve"
+# )
+
+# # Weight matching
+# ax.plot(
+#     lambdas,
+#     [x["loss"] for x in weight_matching_results],
+#     color="tab:green",
+#     marker="^",
+#     linestyle="dashed",
+#     linewidth=2,label="Weight matching (ours)"
+# )
+
+# # OT-Fusion matching
+# ax.plot(
+#     lambdas,
+#     [x["loss"] for x in otfusion_results],
+#     color="tab:brown",
+#     marker="x",
+#     linestyle="dashed",
+#     linewidth=2,label="OT-Fusion"
+# )
+
+# ax.set_xlabel("$\lambda$")
+# ax.set_xticks([0, 1])
+# ax.set_xticklabels(["Model $A$", "Model $B$"])
+# ax.set_ylabel("Loss")
+# ax.set_title(f"ImageNet, ResNet50 (1× width)")
+# ax.legend(loc="upper right", framealpha=0.5)
+# fig.tight_layout()
+
+# plt.savefig("figs/imagenet_resnet50_loss_interp_with_otfusion.png", dpi=300)
+# plt.savefig("figs/imagenet_resnet50_loss_interp_with_otfusion.pdf")
+
 ### Accuracy plot, top-1
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -404,7 +512,7 @@ ax = fig.add_subplot(111)
 #         label="Train")
 ax.plot(
     lambdas,
-    [x["acc1"] for x in naive_results],
+    [100 * x["acc1"] for x in naive_results],
     color="grey",
     linewidth=2,
     linestyle="dashed",
@@ -426,7 +534,7 @@ ax.plot(
 
 # Weight matching
 # ax.plot(lambdas, [x[""]], color="tab:green", marker="^", linewidth=2)
-ax.plot(lambdas, [x["acc1"] for x in weight_matching_results],
+ax.plot(lambdas, [100 * x["acc1"] for x in weight_matching_results],
         color="tab:green",
         marker="^",
         linestyle="dashed",
@@ -468,7 +576,7 @@ ax = fig.add_subplot(111)
 #         label="Train")
 ax.plot(
     lambdas,
-    [x["acc5"] for x in naive_results],
+    [100 * x["acc5"] for x in naive_results],
     color="grey",
     linewidth=2,
     linestyle="dashed",
@@ -490,7 +598,7 @@ ax.plot(
 
 # Weight matching
 # ax.plot(lambdas, [x[""]], color="tab:green", marker="^", linewidth=2)
-ax.plot(lambdas, [x["acc5"] for x in weight_matching_results],
+ax.plot(lambdas, [100 * x["acc5"] for x in weight_matching_results],
         color="tab:green",
         marker="^",
         linestyle="dashed",
@@ -519,3 +627,77 @@ fig.tight_layout()
 
 plt.savefig("figs/imagenet_resnet50_acc5_interp.png", dpi=300)
 plt.savefig("figs/imagenet_resnet50_acc5_interp.pdf")
+
+### Accuracy plot, top-1 (with OT-Fusion)
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+# Naive
+ax.plot(
+    lambdas,
+    [100 * x["acc1"] for x in naive_results],
+    color="grey",
+    linewidth=2,
+    linestyle="dashed",
+    label="Naïve",
+)
+ax.plot(lambdas, [100 * x["acc1"] for x in otfusion_results],
+        color="tab:brown",
+        marker="x",
+        linestyle="dashed",
+        linewidth=2,
+        label="OT-Fusion")
+ax.plot(lambdas, [100 * x["acc1"] for x in weight_matching_results],
+        color="tab:green",
+        marker="^",
+        linestyle="dashed",
+        linewidth=2,
+        label="Weight matching (ours)")
+
+ax.set_xlabel("$\lambda$")
+ax.set_xticks([0, 1])
+ax.set_xticklabels(["Model $A$", "Model $B$"])
+ax.set_ylabel("Top-1 Accuracy")
+ax.set_title(f"ImageNet, ResNet50 (1× width)")
+# ax.legend(loc="lower right", framealpha=0.5)
+ax.legend(framealpha=0.5)
+fig.tight_layout()
+
+plt.savefig("figs/imagenet_resnet50_acc1_interp_with_otfusion.png", dpi=300)
+plt.savefig("figs/imagenet_resnet50_acc1_interp_with_otfusion.pdf")
+
+### Accuracy plot, top-5 (with OT-Fusion)
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+ax.plot(
+    lambdas,
+    [100 * x["acc5"] for x in naive_results],
+    color="grey",
+    linewidth=2,
+    linestyle="dashed",
+    label="Naïve",
+)
+ax.plot(lambdas, [100 * x["acc5"] for x in otfusion_results],
+        color="tab:brown",
+        marker="x",
+        linestyle="dashed",
+        linewidth=2,
+        label="OT-Fusion")
+ax.plot(lambdas, [100 * x["acc5"] for x in weight_matching_results],
+        color="tab:green",
+        marker="^",
+        linestyle="dashed",
+        linewidth=2,
+        label="Weight matching (ours)")
+
+ax.set_xlabel("$\lambda$")
+ax.set_xticks([0, 1])
+ax.set_xticklabels(["Model $A$", "Model $B$"])
+ax.set_ylabel("Top-5 Accuracy")
+ax.set_title(f"ImageNet, ResNet50 (1× width)")
+# ax.legend(loc="lower right", framealpha=0.5)
+fig.tight_layout()
+
+plt.savefig("figs/imagenet_resnet50_acc5_interp_with_otfusion.png", dpi=300)
+plt.savefig("figs/imagenet_resnet50_acc5_interp_with_otfusion.pdf")
