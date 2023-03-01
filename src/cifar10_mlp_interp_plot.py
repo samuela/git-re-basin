@@ -87,25 +87,25 @@ if __name__ == "__main__":
 
   # Naive
   ax.plot(lambdas,
-          np.array(activation_matching_run.summary["train_acc_interp_naive"]),
+          100 * np.array(activation_matching_run.summary["train_acc_interp_naive"]),
           color="grey",
           linewidth=2,
           label=f"Naïve")
   ax.plot(lambdas,
-          np.array(activation_matching_run.summary["test_acc_interp_naive"]),
+          100 * np.array(activation_matching_run.summary["test_acc_interp_naive"]),
           color="grey",
           linewidth=2,
           linestyle="dashed")
 
   # Activation matching
   ax.plot(lambdas,
-          np.array(activation_matching_run.summary["train_acc_interp_clever"]),
+          100 * np.array(activation_matching_run.summary["train_acc_interp_clever"]),
           color="tab:blue",
           marker="*",
           linewidth=2,
           label=f"Activation matching")
   ax.plot(lambdas,
-          np.array(activation_matching_run.summary["test_acc_interp_clever"]),
+          100 * np.array(activation_matching_run.summary["test_acc_interp_clever"]),
           color="tab:blue",
           marker="*",
           linewidth=2,
@@ -113,13 +113,13 @@ if __name__ == "__main__":
 
   # Weight matching
   ax.plot(lambdas,
-          np.array(weight_matching_run.summary["train_acc_interp_clever"]),
+          100 * np.array(weight_matching_run.summary["train_acc_interp_clever"]),
           color="tab:green",
           marker="^",
           linewidth=2,
           label=f"Weight matching")
   ax.plot(lambdas,
-          np.array(weight_matching_run.summary["test_acc_interp_clever"]),
+          100 * np.array(weight_matching_run.summary["test_acc_interp_clever"]),
           color="tab:green",
           marker="^",
           linestyle="dashed",
@@ -127,13 +127,13 @@ if __name__ == "__main__":
 
   # STE matching
   ax.plot(lambdas,
-          np.array(ste_matching_run.summary["train_acc_interp_clever"]),
+          100 * np.array(ste_matching_run.summary["train_acc_interp_clever"]),
           color="tab:red",
           marker="p",
           linewidth=2,
           label=f"STE matching")
   ax.plot(lambdas,
-          np.array(ste_matching_run.summary["test_acc_interp_clever"]),
+          100 * np.array(ste_matching_run.summary["test_acc_interp_clever"]),
           color="tab:red",
           marker="p",
           linestyle="dashed",

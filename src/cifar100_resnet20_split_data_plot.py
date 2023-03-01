@@ -88,7 +88,7 @@ lambdas = np.linspace(0, 1, 25)
 #         linewidth=2,
 #         label=f"Naïve weight interp.")
 ax.plot(lambdas,
-        weight_matching_run.summary["test_acc1_interp_naive"],
+        100 * np.array(weight_matching_run.summary["test_acc1_interp_naive"]),
         color="grey",
         linewidth=2,
         linestyle="dashed",
@@ -96,7 +96,7 @@ ax.plot(lambdas,
 
 # Ensembling
 ax.plot(lambdas,
-        ensembling_run.summary["test_acc_interp"],
+        100 * np.array(ensembling_run.summary["test_acc_interp"]),
         color="tab:purple",
         marker="2",
         linestyle="dashed",
@@ -111,14 +111,14 @@ ax.plot(lambdas,
 #         linewidth=2,
 #         label="Weight matching weight interp.")
 ax.plot(lambdas,
-        weight_matching_run.summary["test_acc1_interp_clever"],
+        100 * np.array(weight_matching_run.summary["test_acc1_interp_clever"]),
         color="tab:green",
         marker="^",
         linestyle="dashed",
         linewidth=2,
         label="Weight matching")
 
-ax.axhline(y=combined_training_run.summary["test_accuracy"],
+ax.axhline(y=100 * combined_training_run.summary["test_accuracy"],
            linewidth=2,
            linestyle="dashed",
            label="Combined data training")
@@ -147,7 +147,7 @@ lambdas = np.linspace(0, 1, 25)
 #         linewidth=2,
 #         label=f"Naïve weight interp.")
 ax.plot(lambdas,
-        weight_matching_run.summary["test_acc5_interp_naive"],
+        100 * np.array(weight_matching_run.summary["test_acc5_interp_naive"]),
         color="grey",
         linewidth=2,
         linestyle="dashed",
@@ -162,7 +162,7 @@ ax.plot(lambdas,
 #         label="Weight matching weight interp.")
 ax.plot(
     lambdas,
-    weight_matching_run.summary["test_acc5_interp_clever"],
+    100 * np.array(weight_matching_run.summary["test_acc5_interp_clever"]),
     color="tab:green",
     marker="^",
     linestyle="dashed",
@@ -179,7 +179,7 @@ def lam_top5_acc(lam):
 
 ax.plot(
     lambdas,
-    [lam_top5_acc(lam) for lam in lambdas],
+    [100 * lam_top5_acc(lam) for lam in lambdas],
     color="tab:purple",
     marker="2",
     linestyle="dashed",
@@ -188,7 +188,7 @@ ax.plot(
 )
 
 # See https://wandb.ai/skainswo/git-re-basin/runs/10kebhlr?workspace=user-skainswo for the calculation of this value
-ax.axhline(y=1.0, linewidth=2, linestyle="dashed", label="Combined data training")
+ax.axhline(y=100.0, linewidth=2, linestyle="dashed", label="Combined data training")
 
 # ax.set_ylim(1, 5.1)
 ax.set_xlabel("$\lambda$")

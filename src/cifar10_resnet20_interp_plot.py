@@ -100,14 +100,14 @@ ax = fig.add_subplot(111)
 # Naive
 ax.plot(
     lambdas,
-    wm32_run.summary["train_acc_interp_naive"],
+    100 * np.array(wm32_run.summary["train_acc_interp_naive"]),
     color="grey",
     linewidth=2,
     label="Train",
 )
 ax.plot(
     lambdas,
-    wm32_run.summary["test_acc_interp_naive"],
+    100 * np.array(wm32_run.summary["test_acc_interp_naive"]),
     color="grey",
     linewidth=2,
     linestyle="dashed",
@@ -130,14 +130,14 @@ ax.plot(
 # Weight matching
 ax.plot(
     lambdas,
-    wm32_run.summary["train_acc_interp_clever"],
+    100 * np.array(wm32_run.summary["train_acc_interp_clever"]),
     color="tab:green",
     marker="^",
     linewidth=2,
 )
 ax.plot(
     lambdas,
-    wm32_run.summary["test_acc_interp_clever"],
+    100 * np.array(wm32_run.summary["test_acc_interp_clever"]),
     color="tab:green",
     marker="^",
     linestyle="dashed",
