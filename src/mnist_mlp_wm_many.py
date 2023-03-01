@@ -261,15 +261,18 @@ if __name__ == "__main__":
   ]
   barycenter_logits = stuff["dataset_logits"](params_barycenter, plotting_ds, 10_000)
   naive_logits = stuff["dataset_logits"](params_naive, plotting_ds, 10_000)
+  ensemble_logits = sum(individual_model_logits) / num_models
 
   individual_model_probs = [jax.nn.softmax(x) for x in individual_model_logits]
   barycenter_probs = jax.nn.softmax(barycenter_logits)
   naive_probs = jax.nn.softmax(naive_logits)
+  ensemble_probs = jax.nn.softmax(ensemble_logits)
 
   individual_model_ys = [[one(ix, probs, plotting_ds["labels"]) for ix in range(num_bins)]
                          for probs in tqdm(individual_model_probs)]
   wm_ys = [one(ix, barycenter_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
   naive_ys = [one(ix, naive_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
+  ensemble_ys = [one(ix, ensemble_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 
   plt.plot([0, 1], [0, 1], color="tab:grey", linestyle="dotted", label="Perfect calibration")
 
@@ -277,12 +280,17 @@ if __name__ == "__main__":
   for ys in individual_model_ys:
     plt.plot(bin_locations, ys, color="tab:orange", alpha=0.25)
 
-  plt.plot(bin_locations, wm_ys, color="tab:green", marker="^", label="MergeMany")
   plt.plot(bin_locations,
            np.nan_to_num(naive_ys),
            color="tab:grey",
            marker=".",
            label="Naïve merging")
+  plt.plot(bin_locations,
+           np.nan_to_num(ensemble_ys),
+           color="tab:purple",
+           marker="2",
+           label="Model ensemble")
+  plt.plot(bin_locations, wm_ys, color="tab:green", marker="^", linewidth=2, label="MergeMany")
   plt.xlabel("Predicted probability")
   plt.ylabel("True probability")
   plt.axis("equal")
@@ -302,15 +310,18 @@ if __name__ == "__main__":
   ]
   barycenter_logits = stuff["dataset_logits"](params_barycenter, plotting_ds, 10_000)
   naive_logits = stuff["dataset_logits"](params_naive, plotting_ds, 10_000)
+  ensemble_logits = sum(individual_model_logits) / num_models
 
   individual_model_probs = [jax.nn.softmax(x) for x in individual_model_logits]
   barycenter_probs = jax.nn.softmax(barycenter_logits)
   naive_probs = jax.nn.softmax(naive_logits)
+  ensemble_probs = jax.nn.softmax(ensemble_logits)
 
   individual_model_ys = [[one(ix, probs, plotting_ds["labels"]) for ix in range(num_bins)]
                          for probs in tqdm(individual_model_probs)]
   wm_ys = [one(ix, barycenter_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
   naive_ys = [one(ix, naive_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
+  ensemble_ys = [one(ix, ensemble_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 
   plt.plot([0, 1], [0, 1], color="tab:grey", linestyle="dotted", label="Perfect calibration")
 
@@ -319,17 +330,24 @@ if __name__ == "__main__":
     plt.plot(bin_locations, ys, color="tab:orange", linestyle="dashed", alpha=0.25)
 
   plt.plot(bin_locations,
-           wm_ys,
-           color="tab:green",
-           marker="^",
-           linestyle="dashed",
-           label="MergeMany")
-  plt.plot(bin_locations,
            np.nan_to_num(naive_ys),
            color="tab:grey",
            marker=".",
            linestyle="dashed",
            label="Naïve merging")
+  plt.plot(bin_locations,
+           np.nan_to_num(ensemble_ys),
+           color="tab:purple",
+           marker="2",
+           linestyle="dashed",
+           label="Model ensemble")
+  plt.plot(bin_locations,
+           wm_ys,
+           color="tab:green",
+           marker="^",
+           linewidth=2,
+           linestyle="dashed",
+           label="MergeMany")
   plt.xlabel("Predicted probability")
   plt.ylabel("True probability")
   plt.axis("equal")
