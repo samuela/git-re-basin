@@ -37,17 +37,20 @@ a_probs = nn.softmax(data[f"a_{plotting_ds_name}_logits"])
 b_probs = nn.softmax(data[f"b_{plotting_ds_name}_logits"])
 clever_probs = nn.softmax(data[f"clever_{plotting_ds_name}_logits"])
 naive_probs = nn.softmax(data[f"naive_{plotting_ds_name}_logits"])
+ensemble_probs = nn.softmax(0.5 * (data[f"a_{plotting_ds_name}_logits"] + data[f"b_{plotting_ds_name}_logits"]))
 
 model_a_ys = [one(ix, a_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 model_b_ys = [one(ix, b_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 wm_ys = [one(ix, clever_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 naive_ys = [one(ix, naive_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
+ensemble_ys = [one(ix, ensemble_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 
 plt.plot([0, 1], [0, 1], color="tab:grey", linestyle="dotted", label="Perfect calibration")
 plt.plot(bin_locations, model_a_ys, alpha=0.5, label="Model A")
 plt.plot(bin_locations, model_b_ys, alpha=0.5, label="Model B")
-plt.plot(bin_locations, wm_ys, color="tab:green", marker="^", label="Weight matching")
 plt.plot(bin_locations, naive_ys, color="tab:grey", marker=".", label="Naïve merging")
+plt.plot(bin_locations, ensemble_ys, color="tab:purple", marker="2", label="Model ensemble")
+plt.plot(bin_locations, wm_ys, color="tab:green", marker="^", linewidth=2, label="Weight matching")
 plt.xlabel("Predicted probability")
 plt.ylabel("True probability")
 plt.axis("equal")
@@ -67,27 +70,36 @@ a_probs = nn.softmax(data[f"a_{plotting_ds_name}_logits"])
 b_probs = nn.softmax(data[f"b_{plotting_ds_name}_logits"])
 clever_probs = nn.softmax(data[f"clever_{plotting_ds_name}_logits"])
 naive_probs = nn.softmax(data[f"naive_{plotting_ds_name}_logits"])
+ensemble_probs = nn.softmax(0.5 * (data[f"a_{plotting_ds_name}_logits"] + data[f"b_{plotting_ds_name}_logits"]))
 
 model_a_ys = [one(ix, a_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 model_b_ys = [one(ix, b_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 wm_ys = [one(ix, clever_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 naive_ys = [one(ix, naive_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
+ensemble_ys = [one(ix, ensemble_probs, plotting_ds["labels"]) for ix in tqdm(range(num_bins))]
 
 plt.plot([0, 1], [0, 1], color="tab:grey", linestyle="dotted", label="Perfect calibration")
 plt.plot(bin_locations, model_a_ys, alpha=0.5, linestyle="dashed", label="Model A")
 plt.plot(bin_locations, model_b_ys, alpha=0.5, linestyle="dashed", label="Model B")
-plt.plot(bin_locations,
-         wm_ys,
-         color="tab:green",
-         marker="^",
-         linestyle="dashed",
-         label="Weight matching")
 plt.plot(bin_locations,
          naive_ys,
          color="tab:grey",
          marker=".",
          linestyle="dashed",
          label="Naïve merging")
+plt.plot(bin_locations,
+         ensemble_ys,
+         color="tab:purple",
+         marker="2",
+         linestyle="dashed",
+         label="Model ensemble")
+plt.plot(bin_locations,
+         wm_ys,
+         color="tab:green",
+         marker="^",
+         linewidth=2,
+         linestyle="dashed",
+         label="Weight matching")
 plt.xlabel("Predicted probability")
 plt.ylabel("True probability")
 plt.axis("equal")
