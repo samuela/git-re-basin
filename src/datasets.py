@@ -1,5 +1,7 @@
 import numpy as np
 import tensorflow_datasets as tfds
+from torchvision import datasets, transforms
+import torch, os
 
 def load_cifar10():
   """Return the training and test datasets, as jnp.array's."""
@@ -55,3 +57,53 @@ def load_cifar100_split():
   train_ds, test_ds = load_cifar100()
   s1, s2 = _split_cifar(train_ds, label_split=50)
   return s1, s2, test_ds
+
+class ImageNet:
+    def __init__(self):
+        super(ImageNet, self).__init__()
+
+        data_root = "/tmp"
+
+        # Data loading code
+        kwargs = {"num_workers": 4}
+
+        # Data loading code
+        traindir = os.path.join(data_root, "train")
+        valdir = os.path.join(data_root, "val")
+
+        normalize = transforms.Normalize(
+            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+        )
+
+        train_dataset = datasets.ImageFolder(
+            traindir,
+            transforms.Compose(
+                [
+                    transforms.RandomResizedCrop(224),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.ToTensor(),
+                    normalize,
+                ]
+            ),
+        )
+
+        self.train_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=1000, shuffle=True, **kwargs
+        )
+
+        self.val_loader = torch.utils.data.DataLoader(
+            datasets.ImageFolder(
+                valdir,
+                transforms.Compose(
+                    [
+                        transforms.Resize(256),
+                        transforms.CenterCrop(224),
+                        transforms.ToTensor(),
+                        normalize,
+                    ]
+                ),
+            ),
+            batch_size=1000,
+            shuffle=False,
+            **kwargs
+        )
