@@ -1,3 +1,8 @@
+"""
+This code is copied (almost) verbatim from https://github.com/n2cholas/jax-resnet/
+It is only used for our resnet50 experiments on ImageNet.
+"""
+
 from functools import partial
 from typing import Callable, Optional, Sequence, Tuple
 
