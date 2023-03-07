@@ -118,34 +118,34 @@ def resnet50_permutation_spec() -> PermutationSpec:
 
   # This is for easy blocks that use a residual connection, without any change in the number of channels.
   easyblock = lambda name, p: {
-      **conv(f"{name}/conv1", p, f"P_{name}_inner1"),
-      **norm(f"{name}/norm1", f"P_{name}_inner1"),
+      **conv(f"{name}/ConvBlock_0/Conv_0", p, f"P_{name}_inner1"),
+      **norm(f"{name}/ConvBlock_0/BatchNorm_0", f"P_{name}_inner1"),
       #
-      **conv(f"{name}/conv2", f"P_{name}_inner1", f"P_{name}_inner2"),
-      **norm(f"{name}/norm2", f"P_{name}_inner2"),
+      **conv(f"{name}/ConvBlock_1/Conv_0", f"P_{name}_inner1", f"P_{name}_inner2"),
+      **norm(f"{name}/ConvBlock_1/BatchNorm_0", f"P_{name}_inner2"),
       #
-      **conv(f"{name}/conv3", f"P_{name}_inner2", p),
-      **norm(f"{name}/norm3", p),
+      **conv(f"{name}/ConvBlock_2/Conv_0", f"P_{name}_inner2", p),
+      **norm(f"{name}/ConvBlock_2/BatchNorm_0", p),
   }
 
   # This is for blocks that use a residual connection, but change the number of channels via a Conv.
   shortcutblock = lambda name, p_in, p_out: {
-      **conv(f"{name}/conv1", p_in, f"P_{name}_inner1"),
-      **norm(f"{name}/norm1", f"P_{name}_inner1"),
-      #
-      **conv(f"{name}/conv2", f"P_{name}_inner1", f"P_{name}_inner2"),
-      **norm(f"{name}/norm2", f"P_{name}_inner2"),
-      #
-      **conv(f"{name}/conv2", f"P_{name}_inner2", p_out),
-      **norm(f"{name}/norm2", p_out),
-      #
-      **conv(f"{name}/shortcut/layers_0", p_in, p_out),
-      **norm(f"{name}/shortcut/layers_1", p_out),
+    **conv(f"{name}/ConvBlock_0/Conv_0", p_in, f"P_{name}_inner1"),
+    **norm(f"{name}/ConvBlock_0/BatchNorm_0", f"P_{name}_inner1"),
+    #
+    **conv(f"{name}/ConvBlock_1/Conv_0", f"P_{name}_inner1", f"P_{name}_inner2"),
+    **norm(f"{name}/ConvBlock_1/BatchNorm_0", f"P_{name}_inner2"),
+    #
+    **conv(f"{name}/ConvBlock_2/Conv_0", f"P_{name}_inner2", p_out),
+    **norm(f"{name}/ConvBlock_2/BatchNorm_0", p_out),
+    #
+    **conv(f"{name}/ResNetSkipConnection_0/ConvBlock_0/Conv_0", p_in, p_out),
+    **norm(f"{name}/ResNetSkipConnection_0/ConvBlock_0/BatchNorm_0", p_out),
   }
 
   return permutation_spec_from_axes_to_perm({
-      **conv("conv1", None, "P_bg0"),
-      **norm("norm1", "P_bg0"),
+      **conv("layers_0/ConvBlock_0/Conv_0", None, "P_bg0"),
+      **norm("layers_0/ConvBlock_0/BatchNorm_0", "P_bg0"),
       #
       **shortcutblock("blockgroups_0/blocks_0", "P_bg0", "P_bg1"),
       **easyblock("blockgroups_0/blocks_1", "P_bg1"),
